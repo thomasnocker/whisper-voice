@@ -1,0 +1,28 @@
+services:
+
+  # Whisper ASR Backend - verarbeitet die Sprachaufnahmen
+  whisper-asr:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    container_name: whisper-asr
+    ports:
+      - "9000:9000"
+    environment:
+      - ASR_MODEL=base
+      - ASR_ENGINE=faster_whisper
+      - ASR_MODEL_PATH=/data/models
+    volumes:
+      - whisper_models:/data/models
+    restart: unless-stopped
+
+  # Whisper Frontend - das Web-Interface
+  whisper-ui:
+    image: nginx:alpine
+    container_name: whisper-ui
+    ports:
+      - "8080:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+    restart: unless-stopped
+
+volumes:
+  whisper_models:
